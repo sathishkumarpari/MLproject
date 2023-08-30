@@ -9,6 +9,8 @@ from dataclasses import dataclass
 
 from src.components.data_transformation import DataTranformation
 from src.components.data_transformation import DataTranformationConfig
+from src.components.model_trainer import ModelTrainer
+from src.components.model_trainer import ModelTrainConfig
 
 
 @dataclass
@@ -33,7 +35,7 @@ class DataIngestion:
             df.to_csv(self.ingestionconfig.raw_data_path,index=False,header=True)
 
             logging.info("splitting the train test dataset")
-            train_set,test_set = train_test_split(df,test_size=0.2,random_state=27)
+            train_set,test_set = train_test_split(df,test_size=0.2,random_state=42)
 
             train_set.to_csv(self.ingestionconfig.train_data_path,index=False,header=True)
             test_set.to_csv(self.ingestionconfig.test_data_path,index=False,header=True)
@@ -52,4 +54,7 @@ if __name__ == '__main__':
     train_data, test_data = obj.initiate_data_ingestion()
 
     data_tranformation = DataTranformation()
-    data_tranformation.initiate_data_transformation(train_data,test_data)
+    train_array,test_array,_ = data_tranformation.initiate_data_transformation(train_data,test_data)
+
+    model_trainer = ModelTrainer()
+    print(model_trainer.initiate_model_trainer(train_array,test_array))
